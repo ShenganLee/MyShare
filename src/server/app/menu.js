@@ -1,4 +1,4 @@
-const { app, Menu, shell } = require("electron");
+const { app, Menu } = require("electron");
 
 const darwinTemplate = [
   {
