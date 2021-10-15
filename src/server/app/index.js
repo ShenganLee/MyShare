@@ -2,12 +2,15 @@ const { app, BrowserWindow } = require('electron');
 
 const buildMenu = require('./menu')
 const createWindow = require('./window')
+const mainEvents = require('./event')
 
 const initialization = () => {
     // create window
     const mainWindow = createWindow()
     // build Menu
     buildMenu(mainWindow)
+    // register Events
+    mainEvents()
 }
 
 const start = () => {
