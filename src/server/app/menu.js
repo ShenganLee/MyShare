@@ -9,12 +9,29 @@ const darwinTemplate = [
 
 const defaultTemplate = [];
 
-const buildMenu = () => {
+const setupDevelopmentEnvironment = (mainWindow) => {
+  mainWindow.webContents.on('context-menu', (_, props) => {
+    const { x, y } = props;
+
+    Menu.buildFromTemplate([
+      {
+        label: 'Inspect element',
+        click: () => {
+          mainWindow.webContents.inspectElement(x, y);
+        },
+      },
+    ]).popup({ window: mainWindow });
+  });
+}
+
+const buildMenu = (mainWindow) => {
   const template =
     process.platform === "darwin" ? darwinTemplate : defaultTemplate;
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+
+  if (process.env.electronEnv = 'development') setupDevelopmentEnvironment(mainWindow)
 };
 
 module.exports = buildMenu;

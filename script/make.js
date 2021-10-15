@@ -5,4 +5,6 @@ process.env.electronEnv = 'production'
 child_process.execSync(`yarn clear`)
 
 child_process.spawnSync(`yarn`, ['vite:build'], { stdio: 'inherit' })
-child_process.spawnSync(`yarn`, [`electron:make`],  { stdio: 'inherit' })
+
+const args = process.argv.slice(2)
+child_process.spawnSync(`yarn`, [`electron:make`, ...args],  { stdio: 'inherit' })

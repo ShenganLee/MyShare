@@ -6,4 +6,5 @@ child_process.execSync(`yarn clear`)
 
 child_process.spawnSync(`yarn`, ['vite:build'], { stdio: 'inherit' })
 
-child_process.spawnSync(`yarn`, [`electron:publish`],  { stdio: 'inherit' })
+const args = process.argv.slice(2)
+child_process.spawnSync(`yarn`, [`electron:publish`, ...args],  { stdio: 'inherit' })

@@ -5,9 +5,9 @@ const createWindow = require('./window')
 
 const initialization = () => {
     // create window
-    createWindow()
+    const mainWindow = createWindow()
     // build Menu
-    buildMenu()
+    buildMenu(mainWindow)
 }
 
 const start = () => {
