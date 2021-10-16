@@ -16,7 +16,7 @@ export const useUploadTrriger = (inputRef, handler) => {
 }
 
 export const useIpcRenderer = () => {
-    const ipcRenderer = useMemo(() => window.electron.ipcRenderer, [])
+    const ipcRenderer = useMemo(() => window.electron && window.electron.ipcRenderer, [])
 
     return ipcRenderer
 }
@@ -24,9 +24,21 @@ export const useIpcRenderer = () => {
 export const useIpcSend = () => {
     const ipcRenderer = useIpcRenderer()
 
-    const handleSend = useCallback(() => {
-        
+    const handleSend = useCallback((channel, ...args) => {
+        return ipcRenderer.send(channel, ...args)
     }, [ipcRenderer])
+
+    return handleSend
+}
+
+export const useIpcSendSync = () => {
+    const ipcRenderer = useIpcRenderer()
+
+    const handleSendSync = useCallback((channel, ...args) => {
+        return ipcRenderer.sendSync(channel, ...args)
+    }, [ipcRenderer])
+
+    return handleSendSync
 }
 
 export const useIpcListener = (handle, listener) => {

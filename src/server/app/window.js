@@ -6,6 +6,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    // maximizable: false,
+    titleBarStyle: 'hidden',
     title: app.getName(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

@@ -1,9 +1,8 @@
-import { memo, useRef } from 'react'
+import { memo, useRef, useState, useCallback, useEffect } from 'react'
 import { AppBar, Container, Box, Paper, Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-import { useUploadTrriger } from './hooks'
-import { useCallback } from 'react';
+import { useUploadTrriger, useIpcSend, useIpcListener } from './hooks'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -17,7 +16,15 @@ const useStyles = makeStyles((theme) => ({
         top: 0,
         transition: theme.transitions.create('top'),
         zIndex: theme.zIndex.appBar,
-        height: '175px'
+        height: '175px',
+    },
+    "header-drag": {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '30px',
+        "-webkit-app-region": "drag",
     },
     upload: {
         position: "relative",
@@ -30,18 +37,25 @@ const useStyles = makeStyles((theme) => ({
         color: "#fff",
         fontSize: "14px",
 
-        padding: '16px 0',
+        padding: '24px 0 16px 0',
         userSelect: 'none',
+        outline: 0,
 
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
+        borderBottomLeftRadius: (props) => props.isDrag ? 200 : 0,
+        borderBottomRightRadius: (props) => props.isDrag ? 200 : 0,
 
         transition: "border-bottom-left-radius .6s,border-bottom-right-radius .6s",
+
+        "& > span": {
+            display: "block",
+            pointerEvents: (props) => props.isDrag ? "none" : "auto",
+        }
     },
     "upload-drag-icon": {
         fontSize: '48px',
         "& > span": {
             cursor: "pointer",
+            "-webkit-app-region": "no-drag",
         }
     },
     "upload-text": {
@@ -59,41 +73,66 @@ const stop = e => {
 }
 const Share = memo(() => {
     const input = useRef()
-    const styles = useStyles()
+
+    const [isDrag, setIsDrag] = useState(false)
+
+    const styles = useStyles({ isDrag })
+    const handleIpcSend = useIpcSend()
+
+    const handleAddFile = useCallback((files) => {
+        const dataList = Array.from(files).map(
+            file => ({ name: file.name, path: file.path })
+        ).filter(Boolean);
+
+        handleIpcSend('dataSource', 'add', dataList)
+    }, [handleIpcSend])
+
+    const handleDeleteFile = useCallback((files) => {
+        handleIpcSend('dataSource', 'delete', dataList)
+    }, [handleIpcSend])
 
     const handleClick = useUploadTrriger(input, (e) => {
-        console.log(e.target.files)
+        handleAddFile(e.target.files)
     })
 
     const handleDragEnter = useCallback((e) => {
         stop(e)
-        e.currentTarget.style.cssText = "border-bottom-left-radius: 200px;border-bottom-right-radius: 200px;"
+        setIsDrag(true)
+        // e.currentTarget.style.cssText = "border-bottom-left-radius: 200px;border-bottom-right-radius: 200px;"
+    }, [])
+
+    const hadleDragLeave = useCallback(e => {
+        stop(e)
+        setIsDrag(false)
     }, [])
 
     const handleDrop = useCallback(e => {
+        hadleDragLeave(e)
+        handleAddFile(e.dataTransfer.files)
+    }, [hadleDragLeave, handleAddFile])
+
+    const handlePaste = useCallback(e => {
         stop(e)
-        e.currentTarget.style.cssText = "";
+        console.log(e)
 
-        const files = Array.from(e.dataTransfer.files);
-
-        const drops = files.map(file => ({ name: file.name, path: file.path }))
-
-        console.log(drops)
+        if (e.metaKey && e.key === 'v') {
+            
+        }
     }, [])
 
     return (
         <Box className={styles.root}>
             <header className={styles.header}>
                 <Box
+                    tabIndex="1"
                     className={styles.upload}
                     onDragOver={stop}
                     onDrop={handleDrop}
+                    onDragLeave={hadleDragLeave}
                     onDragEnter={handleDragEnter}
+                    onKeyDown={handlePaste}
                 >
-                    <span
-                        onDragEnter={stop}
-                        onDragOver={stop}
-                    >
+                    <span>
                         <input
                             ref={input}
                             type="file"
@@ -116,6 +155,7 @@ const Share = memo(() => {
                         </Box>
                     </span>
                 </Box>
+                <div className={styles['header-drag']} />
             </header>
             <main>
 
