@@ -28,7 +28,12 @@ function App() {
               {/* <Route path="/myShare">
 
               </Route> */}
-              <Route path="/" component={Share} />
+              {window.electron ? (
+                <Route path="/" component={Share} />
+              ) : (
+                <Route path="/" component={myShare} />
+              )}
+              
           </Switch>
       </BrowserRouter>
     </ThemeProvider>
