@@ -2,12 +2,16 @@ const fs = require('fs')
 const path = require('path')
 const hash = require('object-hash')
 
+const RESOURCEKEY = 'resource-list'
+
 const RESOURCETYPE = {
-    TEXT: 'text',
-    IMAGE: 'image',
+    TEXT: 'text',  // 文字
+    IMAGE: 'image', // 图片
     
-    FILE: 'file',
-    DIRECTORY: 'directory',
+    FILE: 'file', // 文件
+    DIRECTORY: 'directory', // 文件夹
+
+    GROUP: 'group', // 分组
 }
 
 const AsyncFunc = async (promise) => {
@@ -39,8 +43,19 @@ const prevFiles = (filePaths) => {
     ).filter(Boolean);
 }
 
+const prevImage = (image) => {
+
+}
+
+const prevText = (text) => {
+
+}
+
 module.exports = {
+    RESOURCEKEY,
     RESOURCETYPE,
     prevFiles,
+    prevImage,
+    prevText,
     AsyncFunc,
 }
