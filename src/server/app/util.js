@@ -44,11 +44,22 @@ const prevFiles = (filePaths) => {
 }
 
 const prevImage = (image) => {
-
+    const id = getResourceId(RESOURCETYPE.TEXT, image)
+    return {
+        id: id,
+        value: image,
+        name: `${id}.png`,
+        type: RESOURCETYPE.IMAGE,
+    }
 }
 
 const prevText = (text) => {
-
+    return {
+        value: text,
+        name: text.substr(0, 50),
+        type: RESOURCETYPE.TEXT,
+        id: getResourceId(RESOURCETYPE.TEXT, text),
+    }
 }
 
 module.exports = {

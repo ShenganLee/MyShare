@@ -19,7 +19,7 @@ const addResource = (resource) => {
         resourceMap.set(res.id, res)
     })
 
-    const newResourceList = idSet.map(id => resourceMap.get(id))
+    const newResourceList = Array.from(idSet).map(id => resourceMap.get(id))
     storage.setStorage(RESOURCEKEY, newResourceList)
 }
 

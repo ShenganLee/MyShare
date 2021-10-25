@@ -1,10 +1,8 @@
 const { ipcMain, dialog, clipboard } = require('electron')
 const clipboardFiles = require('clipboard-files')
 
-const { RESOURCEKEY, AsyncFunc, prevFiles } = require('./util')
+const { prevFiles, prevImage, prevText } = require('./util')
 const Resource = require('./resource')
-
-
 
 const mainEvents = () => {
     // 操作数据
@@ -51,17 +49,24 @@ const mainEvents = () => {
         const typeSet = new Set(clipboard.availableFormats())
         console.log('paste-types', typeSet)
 
+        let resource = []
         if (typeSet.has('text/uri-list')) {
-            const files = clipboardFiles.readFiles().map(file => decodeURIComponent(file))
-            console.log('paste-data-files', files)
+            const files = clipboardFiles.readFiles().map(file => decodeURIComponent(file).replace('file://', ''))
+            resource = prevFiles(files)
+            console.log('paste-data-files', resource)
         } else if (typeSet.has('image/png')) {
             const img = clipboard.readImage().toDataURL()
-            console.log('paste-data-img', img)
+            resource = [prevImage(img)]
+            console.log('paste-data-img', resource)
         } else {
             const text = clipboard.readText()
-            console.log('paste-data-text', text)
+            resource = [prevText(text)]
+            console.log('paste-data-text', resource)
         }
         
+        if (resource && resource.length) {
+            Resource.addResource(resource)
+        }
         // event.sender.send('resource-monitor', )
     })
 }
