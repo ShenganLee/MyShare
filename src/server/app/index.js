@@ -4,16 +4,16 @@ const buildMenu = require('./menu')
 const createWindow = require('./window')
 const mainEvents = require('./event')
 
-const initialization = () => {
+const initialization = (ip, port) => {
     // create window
-    const mainWindow = createWindow()
+    const mainWindow = createWindow(ip, port)
     // build Menu
     buildMenu(mainWindow)
     // register Events
     mainEvents()
 }
 
-const start = () => {
+const start = async (ip, port) => {
   // Handle creating/removing shortcuts on Windows when installing/uninstalling.
   if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
     app.quit();
@@ -22,7 +22,7 @@ const start = () => {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', initialization);
+  app.on('ready', () => initialization(ip, port));
 
   // Quit when all windows are closed, except on macOS. There, it's common
   // for applications and their menu bar to stay active until the user quits
@@ -37,7 +37,7 @@ const start = () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
-      initialization();
+      initialization(ip, port);
     }
   });
 

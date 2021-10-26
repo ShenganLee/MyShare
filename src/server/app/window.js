@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
-const createWindow = () => {
+const createWindow = (ip, port) => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -16,12 +16,7 @@ const createWindow = () => {
   });
 
   // and load the index.html of the app.
-  if (process.env.electronEnv = 'development') {
-    mainWindow.loadURL('http://localhost:9999')
-  } else if (process.env.electronEnv = 'production') {
-    mainWindow.loadFile(path.join(process.cwd(), './dist/index.html'))
-  }
-
+  mainWindow.loadURL(`http://${ip}:${port}`)
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
 
